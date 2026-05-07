@@ -1,26 +1,208 @@
 @import "tailwindcss";
+/* Fonts loaded via <link> in layout.tsx */
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  /* Brand */
+  --color-sunset:        #E86A47;
+  --color-ocean:         #2A7B88;
+
+  /* Surfaces */
+  --color-canvas:        #F7F4EB;
+  --color-surface-sand:  #E3D5C8;
+  --color-surface-light: #FFFFFF;
+
+  /* Text */
+  --color-ink:           #2C221B;
+  --color-body:          #5A4C40;
+  --color-muted:         #8B7E74;
+
+  /* Shadows */
+  --shadow-soft:    0 4px 12px rgba(44, 34, 27, 0.04);
+  --shadow-floating: 0 12px 40px rgba(44, 34, 27, 0.08);
+
+  /* Easing */
+  --ease-fluid: cubic-bezier(0.25, 1, 0.5, 1);
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-sunset:        var(--color-sunset);
+  --color-ocean:         var(--color-ocean);
+  --color-canvas:        var(--color-canvas);
+  --color-surface-sand:  var(--color-surface-sand);
+  --color-surface-light: var(--color-surface-light);
+  --color-ink:           var(--color-ink);
+  --color-body:          var(--color-body);
+  --color-muted:         var(--color-muted);
+  --font-display: "Clash Display", sans-serif;
+  --font-sans:    "Satoshi", sans-serif;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
+/* ── Base ──────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; }
+
+html { scroll-behavior: smooth; }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--color-canvas);
+  color: var(--color-ink);
+  font-family: "Satoshi", sans-serif;
+  -webkit-font-smoothing: antialiased;
+  min-height: 100vh;
 }
+
+/* ── Typography helpers ────────────────────────── */
+.font-display  { font-family: "Clash Display", sans-serif; }
+.font-sans     { font-family: "Satoshi", sans-serif; }
+
+/* ── Scroll-reveal animation ───────────────────── */
+@keyframes reveal-up {
+  from { opacity: 0; transform: translateY(30px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.reveal {
+  animation: reveal-up 0.7s var(--ease-fluid) both;
+}
+.reveal-delay-1 { animation-delay: 0.1s; }
+.reveal-delay-2 { animation-delay: 0.2s; }
+.reveal-delay-3 { animation-delay: 0.3s; }
+
+/* ── Button primary ────────────────────────────── */
+.btn-primary {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--color-sunset);
+  color: #fff;
+  font-family: "Satoshi", sans-serif;
+  font-size: 16px;
+  font-weight: 500;
+  letter-spacing: 0.5px;
+  padding: 12px 28px;
+  border-radius: 8px;
+  box-shadow: var(--shadow-floating);
+  border: none;
+  cursor: pointer;
+  transition: transform 0.25s var(--ease-fluid), box-shadow 0.25s var(--ease-fluid), opacity 0.2s;
+}
+.btn-primary:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 18px 48px rgba(44, 34, 27, 0.14);
+}
+.btn-primary:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+/* ── Button secondary ──────────────────────────── */
+.btn-secondary {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--color-surface-sand);
+  color: var(--color-ink);
+  font-family: "Satoshi", sans-serif;
+  font-size: 15px;
+  font-weight: 500;
+  padding: 12px 24px;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.2s;
+}
+.btn-secondary:hover:not(:disabled) {
+  background: #d9c9bb;
+}
+.btn-secondary:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+/* ── Card (sharp edges = 0px) ──────────────────── */
+.card {
+  background: var(--color-surface-light);
+  box-shadow: var(--shadow-floating);
+  border-radius: 0;
+  overflow: hidden;
+}
+
+/* ── Input field ───────────────────────────────── */
+.input-field {
+  width: 100%;
+  padding: 12px 16px;
+  background: var(--color-surface-light);
+  border: 1.5px solid var(--color-surface-sand);
+  border-radius: 8px;
+  font-family: "Satoshi", sans-serif;
+  font-size: 15px;
+  color: var(--color-ink);
+  transition: border-color 0.2s, box-shadow 0.2s;
+  outline: none;
+}
+.input-field::placeholder { color: var(--color-muted); }
+.input-field:focus {
+  border-color: var(--color-sunset);
+  box-shadow: 0 0 0 3px rgba(232, 106, 71, 0.12);
+}
+
+/* ── Step badge ────────────────────────────────── */
+.step-badge {
+  width: 36px; height: 36px;
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-family: "Satoshi", sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  transition: background 0.3s, color 0.3s, box-shadow 0.3s;
+}
+.step-badge.active {
+  background: var(--color-sunset);
+  color: #fff;
+  box-shadow: 0 0 0 5px rgba(232, 106, 71, 0.18);
+}
+.step-badge.done {
+  background: var(--color-sunset);
+  color: #fff;
+}
+.step-badge.idle {
+  background: var(--color-surface-sand);
+  color: var(--color-muted);
+}
+
+/* ── Progress connector ────────────────────────── */
+.step-connector {
+  flex: 1;
+  height: 2px;
+  margin-bottom: 20px;
+  transition: background 0.4s;
+}
+.step-connector.done { background: var(--color-sunset); }
+.step-connector.idle { background: var(--color-surface-sand); }
+
+/* ── Network card ──────────────────────────────── */
+.network-card {
+  padding: 20px 16px;
+  border: 2px solid var(--color-surface-sand);
+  background: var(--color-surface-light);
+  border-radius: 0;
+  cursor: pointer;
+  transition: border-color 0.2s var(--ease-fluid), box-shadow 0.2s var(--ease-fluid), transform 0.2s var(--ease-fluid);
+  text-align: center;
+}
+.network-card:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-floating);
+}
+.network-card.selected {
+  border-color: var(--color-sunset);
+  box-shadow: var(--shadow-floating);
+}
+
+/* ── Tag ───────────────────────────────────────── */
+.tag {
+  display: inline-block;
+  padding: 4px 12px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 500;
+}
+
