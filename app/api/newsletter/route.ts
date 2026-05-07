@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
-import supabase from "@/lib/supabase";
+import { getSupabase } from "@/lib/supabase";
 
 const schema = z.object({
   firstName: z.string().min(1),
@@ -13,7 +13,7 @@ export async function POST(req: NextRequest) {
     const body = await req.json();
     const { firstName, lastName, email } = schema.parse(body);
 
-    const { error } = await supabase
+    const { error } = await getSupabase()
       .from("lien_creation_de_poste")
       .insert({
         adree_mail: email,
