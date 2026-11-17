@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { generatePost } from "@/lib/gemini";
 import { z } from "zod";
 
+export const maxDuration = 60;
+
 const schema = z.object({
   article: z.object({
     title: z.string(),

@@ -2,12 +2,20 @@ import https from "node:https";
 import { Network, getNetworkPromptFragment } from "./networkConstraints";
 import type { ArticleData, ProfileData } from "./scraper";
 
-const GEMINI_API_KEY = process.env.GEMINI_API_KEY || "";
-
 export interface GeneratedPost {
   title?: string; // Reddit only
   post: string;
   imagePrompt: string;
+}
+
+function getApiKey(): string {
+  const key = process.env.GEMINI_API_KEY;
+  if (!key || key.trim() === "") {
+    throw new Error(
+      "GEMINI_API_KEY est manquante dans les variables d'environnement. Assurez-vous de l'avoir ajoutée sur Vercel et d'avoir relancé le déploiement."
+    );
+  }
+  return key.trim();
 }
 
 function requestGemini(
@@ -15,17 +23,18 @@ function requestGemini(
   payload: Record<string, unknown>
 ): Promise<string> {
   return new Promise((resolve, reject) => {
+    const apiKey = getApiKey();
     const postData = JSON.stringify(payload);
     const options: https.RequestOptions = {
       hostname: "generativelanguage.googleapis.com",
       port: 443,
-      path: `/v1beta/models/${model}:generateContent?key=${GEMINI_API_KEY}`,
+      path: `/v1beta/models/${model}:generateContent?key=${apiKey}`,
       method: "POST",
       headers: {
         "Content-Type": "application/json",
         "Content-Length": Buffer.byteLength(postData),
       },
-      timeout: 20000,
+      timeout: 45000,
     };
 
     const req = https.request(options, (res) => {
@@ -48,7 +57,7 @@ function requestGemini(
             ) || parts[parts.length - 1];
           resolve(textPart?.text ?? "");
         } catch (e: any) {
-          reject(new Error(`Failed to parse Gemini response: ${e.message}`));
+          reject(new Error(`Impossible d'analyser la réponse Gemini: ${e.message}`));
         }
       });
     });
@@ -58,7 +67,7 @@ function requestGemini(
     });
 
     req.on("timeout", () => {
-      req.destroy(new Error("Gemini API request timed out"));
+      req.destroy(new Error("Gemini API request timed out (le serveur Google a mis plus de 45s à répondre)"));
     });
 
     req.write(postData);
@@ -90,10 +99,12 @@ async function callGemini(
     body.generationConfig = {
       responseMimeType: "application/json",
       temperature: 0.7,
+      maxOutputTokens: 2048,
     };
   } else {
     body.generationConfig = {
       temperature: 0.7,
+      maxOutputTokens: 2048,
     };
   }
 
@@ -101,7 +112,7 @@ async function callGemini(
   try {
     return await requestGemini("gemini-3.5-flash-lite", body);
   } catch (err: any) {
-    if (err.message && err.message.includes("503")) {
+    if (err.message && (err.message.includes("503") || err.message.includes("429"))) {
       return await requestGemini("gemini-flash-latest", body);
     }
     throw err;

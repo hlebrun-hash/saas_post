@@ -3,6 +3,8 @@ import { scrapeProfile } from "@/lib/scraper";
 import { analyzeProfileTone } from "@/lib/gemini";
 import { z } from "zod";
 
+export const maxDuration = 60;
+
 const schema = z.object({
   profileUrl: z.string().url(),
   network: z.enum(["linkedin", "instagram", "x", "reddit"]),
