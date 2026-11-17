@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { scrapeProfile } from "@/lib/scraper";
-import { analyzeProfileTone } from "@/lib/mistral";
+import { analyzeProfileTone } from "@/lib/gemini";
 import { z } from "zod";
 
 const schema = z.object({

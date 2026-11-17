@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { generatePost } from "@/lib/mistral";
+import { generatePost } from "@/lib/gemini";
 import { z } from "zod";
 
 const schema = z.object({

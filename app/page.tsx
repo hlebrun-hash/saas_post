@@ -8,7 +8,7 @@ import PostResult from "@/components/PostResult";
 import NewsletterCTA from "@/components/NewsletterCTA";
 import type { ArticleData, ProfileData } from "@/lib/scraper";
 import type { Network } from "@/lib/networkConstraints";
-import type { GeneratedPost } from "@/lib/mistral";
+import type { GeneratedPost } from "@/lib/gemini";
 
 type Step = 1 | 2 | 3 | 4 | 5;
 

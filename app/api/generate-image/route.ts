@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { generateImage } from "@/lib/imageGen";
+import { generateImage } from "@/lib/gemini";
 import { z } from "zod";
 
 const schema = z.object({ prompt: z.string().min(1) });
